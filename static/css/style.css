@@ -1,0 +1,49 @@
+input[type='checkbox'], input[type='radio'] {
+    margin-left: 0px;
+    color: red;
+}
+.form ul li > label:first-child {
+    min-width: 300px;
+}
+
+#loadList {
+    text-align: left;
+}
+
+#loadList li {
+    line-height: 24px;
+    margin: 5px;
+    padding-left: 30px;
+}
+#loadList li.loading {
+    background-image: url("http://static.ruminski.org/img/loader/24_bw_1.gif");
+    background-repeat: no-repeat;
+}
+#loadList li.error {
+    background-image: url("http://static.ruminski.org/img/icon/24_error_1.png");
+    background-repeat: no-repeat;
+}
+
+.ui-progressbar {
+    height: 21px;
+    position: relative;
+}
+#progressbar-label {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    line-height: 22px;
+}
+.ui-progressbar .ui-progressbar-value {
+    margin: -2px;
+}
+.ui-progressbar.working .ui-progressbar-value {
+    background-image: url("../3rd/jquery/ui-images/pbar-ani.gif");
+}
+
+#results li {
+    border: 1px solid #FFA500;
+    margin: 5px 0px;
+    padding: 3px;
+}

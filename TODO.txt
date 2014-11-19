@@ -1,0 +1,50 @@
+OBRAZY:
+www.freeimages.co.uk
+
+gray=>grey
+Ker\Image -> Ker\Graphic\Image
+
+
+
+Szanowna Pani Doktor,
+przesyłam informacje odnośnie stanu realizowanego przeze mnie tematu Pracy Dyplomowej: "Dobór i analiza wybranych metod wyszukiwania obrazów podobnych".
+
+Została przygotowana struktura tekstu oraz przygotowany rozdział opisujący i ukazujący implementacje wybranych algorytmów.
+Została przygotowana aplikacja webowa do wyszukiwania obrazów: http://keradus.home.pl/imgGrep/ .
+Przygotowana została baza 10 obrazów, będących różnymi i niepodobnymi obrazami. Przygotowałem też bazę 9 obrazów testowych, które zdają się dobrze obrazować zalety i wady algorytmów. Baza testowa została następnie włączona do bazy obrazów.
+Jako następny krok planuję napisać program porównujący algorytmy i uzupełnić rozdział pracy prezentujący wyniki porównania.
+Kolejnym krokiem będzie poszerzenie bazy algorytmów.
+Jako finalny krok planuję uzupełnić część drugą pracy - opis przygotowanej aplikacji.
+
+Opisane i zaimplementowane zostało 6 algorytmów:
+- klasyczne sprawdzanie pikseli,
+- sprawdzanie tożsamości pikseli,
+- sprawdzanie podobieństwa pikseli,
+- wyznaczenie współczynnika PSNR,
+- sprawdzanie tożsamości pikseli,
+- sprawdzanie podobieństwa pikseli.
+
+Zaplanowane zostały 3 algorytmy:
+- wyznaczenie współczynnika MSE (którego rozwinięciem jest juz gotowe PSNR),
+- wyznaczenie współczynnika SSIM (structural similarity),
+- sprawdzenie różnicy w histogramach.
+
+
+W załącznikach przesyłam następujące pliki:
+Praca.pdf - wygenerowany plik pdf
+Praca-LaTeX.zip - zrodo pliku pdf w LaTeX-u
+exampleGallery.zip - galeria obrazów
+test.zip - galeria obrazów testowych
+algorytmy.zip - minimalna baza kodu do porównania obrazów
+    /Image/Comparator/Block/* - algorytmy bazujące na pikselach
+    /Image/Comparator/Pixel/* - algorytmy bazujące na blokach
+imgGrep.zip - spakowana wersja aplikacji webowej
+
+
+Jednocześnie informuję, iż w rozpoczynającym się tygodniu udaję się do Pana doktora Pieli z wnioskiem o przedłużenie terminu oddania Pracy Dyplomowej.
+
+
+
+
+z wyrazami szacunku,
+Dariusz Rumiński

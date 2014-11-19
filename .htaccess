@@ -1,0 +1,6 @@
+:Location /*.php
+Use php54
+:Location
+
+Options FollowSymLinks
+RewriteEngine On
