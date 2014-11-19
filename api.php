@@ -9,6 +9,8 @@ $psr4autoloader = new \Keradus\Psr4Autoloader();
 $psr4autoloader->register();
 $psr4autoloader->addNamespace("Ker", "vendor\keradus\Ker\src");
 
+\Ker\Graphics\ImageFileLoader::registerBuiltInParsers();
+
 function compare (array $_params) {
     $comparator = \Ker\Graphics\Comparator::createInstance(
         $_params["algorithm"],

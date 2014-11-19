@@ -12,19 +12,17 @@ class ImageFileLoader
 {
     use \Ker\InaccessiblePropertiesProtectorTrait;
 
-    protected static $parsers;
+    protected static $parsers = array();
 
-    protected static $availableTypes;
-
-    public static function __constructStatic()
+    public static function registerBuiltInParsers()
     {
-        static $isInitialized = false;
+        static $registered = false;
 
-        if ($isInitialized) {
+        if ($registered) {
             return;
         }
 
-        $isInitialized = true;
+        $registered = true;
 
         $parsers = [
             "image/gif" => function($_filename) {
@@ -43,14 +41,20 @@ class ImageFileLoader
                 return @imagecreatefromgd2($_filename);
             },
         ];
+        
+        foreach ($parsers as $type => $parser) {
+            static::registerParser($type, $parser);
+        }
+    }
 
-        static::$parsers = $parsers;
-        static::$availableTypes = array_keys($parsers);
+    public static function registerParser($_type, callable $_parser)
+    {
+        static::$parsers[$_type] = $_parser;
     }
 
     public static function getAvailableTypes()
     {
-        return self::$availableTypes;
+        return array_keys(static::$parsers);
     }
 
     protected $filename;
@@ -107,5 +111,3 @@ class ImageFileLoader
         }
     }
 }
-
-ImageFileLoader::__constructStatic();

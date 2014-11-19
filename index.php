@@ -10,6 +10,8 @@ $psr4autoloader->addNamespace("Ker", "vendor\keradus\Ker\src");
 
 require_once "res.form.pl.php";
 
+\Ker\Graphics\ImageFileLoader::registerBuiltInParsers();
+
 $galleriesDirs = array(
     "./exampleGallery" => "exampleGallery",
 );

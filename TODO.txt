@@ -1,10 +1,6 @@
 OBRAZY:
 www.freeimages.co.uk
 
-gray=>grey
-Ker\Image -> Ker\Graphic\Image
-
-
 
 Szanowna Pani Doktor,
 przesyłam informacje odnośnie stanu realizowanego przeze mnie tematu Pracy Dyplomowej: "Dobór i analiza wybranych metod wyszukiwania obrazów podobnych".
@@ -23,9 +19,9 @@ Opisane i zaimplementowane zostało 6 algorytmów:
 - wyznaczenie współczynnika PSNR,
 - sprawdzanie tożsamości pikseli,
 - sprawdzanie podobieństwa pikseli.
+- wyznaczenie współczynnika MSE (którego rozwinięciem jest juz gotowe PSNR),
 
 Zaplanowane zostały 3 algorytmy:
-- wyznaczenie współczynnika MSE (którego rozwinięciem jest juz gotowe PSNR),
 - wyznaczenie współczynnika SSIM (structural similarity),
 - sprawdzenie różnicy w histogramach.
 

@@ -9,6 +9,8 @@ $psr4autoloader = new \Keradus\Psr4Autoloader();
 $psr4autoloader->register();
 $psr4autoloader->addNamespace("Ker", "vendor\keradus\Ker\src");
 
+\Ker\Graphics\ImageFileLoader::registerBuiltInParsers();
+
 $galleryDir = "exampleGallery";
 $testFile = "test/park.jpg";
 
