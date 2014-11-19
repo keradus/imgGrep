@@ -3,34 +3,31 @@
 ini_set("display_errors", "On");
 error_reporting(E_ALL);
 
-require_once "vendor\keradus\Psr4Autoloader\src\Keradus\Psr4Autoloader.php";
+require_once "./vendor/autoload.php";
 
-$psr4autoloader = new \Keradus\Psr4Autoloader();
-$psr4autoloader->register();
-$psr4autoloader->addNamespace("Ker", "vendor\keradus\Ker\src");
-
-\Ker\Graphics\ImageFileLoader::registerBuiltInParsers();
+\Keradus\Graphics\ImageFileLoader::registerBuiltInParsers();
 
 $galleryDir = "exampleGallery";
-$testFile = "test/park.jpg";
+$testFile = "exampleGallery/park.jpg";
 
 function getImageFileLoader($_file)
 {
     static $loaders = [];
 
     if (!isset($loaders[$_file])) {
-        $loaders[$_file] = new \Ker\Graphics\ImageFileLoader($_file);
+        $loaders[$_file] = new \Keradus\Graphics\ImageFileLoader($_file);
     }
 
     return $loaders[$_file];
 }
 
-function compare (array $_params) {
-    $comparator = \Ker\Graphics\Comparator::createInstance(
+function compare(array $_params)
+{
+    $comparator = \Keradus\Graphics\Comparator::createInstance(
         $_params["algorithm"],
         [
-            "imgA" => new \Ker\Graphics\Image(getImageFileLoader($_params["fileA"])),
-            "imgB" => new \Ker\Graphics\Image(getImageFileLoader($_params["fileB"])),
+            "imgA" => new \Keradus\Graphics\Image(getImageFileLoader($_params["fileA"])),
+            "imgB" => new \Keradus\Graphics\Image(getImageFileLoader($_params["fileB"])),
         ]
     );
 
@@ -47,13 +44,13 @@ function compare (array $_params) {
 
 $files = [];
 
-foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($galleryDir)) AS $item) {
-    if ($item->isFile()) {
+foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($galleryDir)) as $item) {
+    if ($item->isFile() && $item->getExtension() !== "") {
         $files[] = $item->getPathname();
     }
 }
 
-foreach (array_merge([$testFile, ], $files) as $file) {
+foreach (array_merge([$testFile], $files) as $file) {
     getImageFileLoader($file)->process();
 }
 
@@ -69,7 +66,7 @@ $sortFnc = function ($_a, $_b) {
     return $_a["ratio"] > $_b["ratio"];
 };
 
-$algorithms = \Ker\Graphics\Comparator::getAllowedInstanceNames();
+$algorithms = \Keradus\Graphics\Comparator::getAllowedInstanceNames();
 
 $params = [
     "gray" => false,
@@ -95,7 +92,9 @@ foreach ($algorithms as $algorithm) {
         $algorithmResult[$shortName] = compare($params);
         echo "\n";
 
-if (count($algorithmResult) === 2) { break; }
+        if (count($algorithmResult) === 2) {
+            break;
+        }
     }
 
     uasort($algorithmResult, $sortFnc);
