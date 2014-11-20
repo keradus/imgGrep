@@ -1,0 +1,19 @@
+html {
+    text-align: center;
+}
+
+#search-form {
+    margin: auto;
+    width: 50%;
+}
+
+#search-form #form > div {
+    margin: 10px;
+}
+
+#search-form label {
+    float: left;
+    display: inline-block;
+    width: 250px;
+    text-align: left;
+}

@@ -1,0 +1,9 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1 id="title" class="contact">imgGrep</h2>
+    <form id="search-form" action="#" method="post" enctype="application/x-www-form-urlencoded">
+        {{ form_widget(form) }}
+        <input type="submit" name="submit" />
+    </form>
+{% endblock %}
