@@ -44,7 +44,7 @@ $app->get(
 
             $form->handleRequest($request);
 
-            return $app['twig']->render('index.twig', array('form' => $form->createView()));
+            return $app['twig']->render('index.twig', ['form' => $form->createView()]);
         }
     )
     ->bind('index')
@@ -55,12 +55,12 @@ $app->error(function (\Exception $e, $code) use ($app) {
         return;
     }
 
-    $templates = array(
-        'errors/'.$code.'.twig',
-        'errors/'.substr($code, 0, 2).'x.twig',
-        'errors/'.substr($code, 0, 1).'xx.twig',
+    $templates = [
+        'errors/' . $code . '.twig',
+        'errors/' . substr($code, 0, 2) . 'x.twig',
+        'errors/' . substr($code, 0, 1) . 'xx.twig',
         'errors/default.twig',
-    );
+    ];
 
-    return new Response($app['twig']->resolveTemplate($templates)->render(array('code' => $code)), $code);
+    return new Response($app['twig']->resolveTemplate($templates)->render(['code' => $code]), $code);
 });
