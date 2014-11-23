@@ -2,41 +2,45 @@
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use \Keradus\Graphics\ImageFileLoader;
+use \Keradus\Graphics\Comparator;
 
-//Request::setTrustedProxies(array('127.0.0.1'));
-
-// http://silex.sensiolabs.org/doc/providers/form.html
 $app->get(
         '/',
         function (Request $request) use ($app) {
+            $algorithms = Comparator::getAllowedInstanceNames();
+
+            //ImageFileLoader::registerBuiltInParsers();
+            //var_dump(ImageFileLoader::getAvailableTypes());
+
             $defaults = [];
 
             $form = $app['form.factory']->createBuilder('form', $defaults)
-                ->add('file', 'file')
+//                ->add('file', 'file')
                 ->add('resize', 'checkbox', [
                     'label'    => 'Zezwól na dopasowanie rozmiarów',
                     'required' => false,
                 ])
                 ->add('grey', 'checkbox', [
-                    'label' => 'Sprawdzaj w skali szarości',
+                    'label'    => 'Sprawdzaj w skali szarości',
+                    'required' => false,
                 ])
                 ->add('identical', 'checkbox', [
-                    'label' => 'Pokaż tylko identyczne',
+                    'label'    => 'Pokaż tylko identyczne',
+                    'required' => false,
                 ])
                 ->add('limit', 'integer', [
-                    'label' => 'Limit wyników',
+                    'label'     => 'Limit wyników',
+                    'precision' => 0,
+                    'required'  => false,
                 ])
                 ->add('algorithm', 'choice', [
                     'label'   => 'Algorytm',
-                    'choices' => [
-                        1 => 'jakaś algorytm',
-                    ],
+                    'choices' => array_combine($algorithms, $algorithms),
                 ])
                 ->add('gallery', 'choice', [
                     'label'   => 'Baza obrazków',
-                    'choices' => [
-                        1 => 'jakaś galeria',
-                    ],
+                    'choices' => array_combine(array_keys($app['imgGrep.galleries']), array_keys($app['imgGrep.galleries'])),
                 ])
                 ->add('save', 'submit', [
                     'label' => 'Szukaj',

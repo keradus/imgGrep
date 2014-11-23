@@ -17,8 +17,6 @@ $app->register(new FormServiceProvider());
 $app->register(new TranslationServiceProvider());
 
 $app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
-    // add custom globals, filters, tags, ...
-
     return $twig;
 }));
 
