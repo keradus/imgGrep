@@ -14,7 +14,8 @@ $app->get(
             $form = $app['form.factory']->createBuilder('form', $defaults)
                 ->add('file', 'file')
                 ->add('resize', 'checkbox', [
-                    'label' => 'Zezwól na dopasowanie rozmiarów',
+                    'label'    => 'Zezwól na dopasowanie rozmiarów',
+                    'required' => false,
                 ])
                 ->add('grey', 'checkbox', [
                     'label' => 'Sprawdzaj w skali szarości',
@@ -26,13 +27,13 @@ $app->get(
                     'label' => 'Limit wyników',
                 ])
                 ->add('algorithm', 'choice', [
-                    'label' => 'Algorytm',
+                    'label'   => 'Algorytm',
                     'choices' => [
                         1 => 'jakaś algorytm',
                     ],
                 ])
                 ->add('gallery', 'choice', [
-                    'label' => 'Baza obrazków',
+                    'label'   => 'Baza obrazków',
                     'choices' => [
                         1 => 'jakaś galeria',
                     ],
@@ -44,7 +45,7 @@ $app->get(
 
             $form->handleRequest($request);
 
-            return $app['twig']->render('index.twig', array('form' => $form->createView()));
+            return $app['twig']->render('index.twig', ['form' => $form->createView()]);
         }
     )
     ->bind('index')
@@ -55,12 +56,12 @@ $app->error(function (\Exception $e, $code) use ($app) {
         return;
     }
 
-    $templates = array(
-        'errors/'.$code.'.twig',
-        'errors/'.substr($code, 0, 2).'x.twig',
-        'errors/'.substr($code, 0, 1).'xx.twig',
+    $templates = [
+        'errors/' . $code . '.twig',
+        'errors/' . substr($code, 0, 2) . 'x.twig',
+        'errors/' . substr($code, 0, 1) . 'xx.twig',
         'errors/default.twig',
-    );
+    ];
 
-    return new Response($app['twig']->resolveTemplate($templates)->render(array('code' => $code)), $code);
+    return new Response($app['twig']->resolveTemplate($templates)->render(['code' => $code]), $code);
 });
