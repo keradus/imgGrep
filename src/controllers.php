@@ -17,6 +17,7 @@ $app
 
             $form = $app['form.factory']->createBuilder('form', [])
                 ->add('file', 'file', [
+                    'label'       => 'Plik',
                     'constraints' => [
                         new \Symfony\Component\Validator\Constraints\Image([
                             'mimeTypes'        => ImageFileLoader::getAvailableTypes(),

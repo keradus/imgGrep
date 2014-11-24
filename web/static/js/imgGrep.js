@@ -141,21 +141,19 @@
                             result = results[i];
                             $results.append(
                                 "<li>" +
-                                    "<div>" +
-                                        "<div class='FL'>" + result.file + "</div>" +
-                                        "<div class='FR'>" + (
-                                            result.isIdentical
-                                                ? "IDENTYCZNY"
-                                                : (
-                                                    result.ratio !== null
-                                                        ? ("współczynnik: " + result.ratio)
-                                                        : "-"
-                                                )
-                                        ) + "</div>" +
-                                    "</div>" +
-                                    "<div class='CB centered'>" +
+                                    "<div class='name'>" + result.file + "</div>" +
+                                    "<div class='preview'>" +
                                         "<img src='" + file2url(result.file) + "' alt='" + result.file + "' />" +
                                     "</div>" +
+                                    "<div class='ratio'>" + (
+                                        result.isIdentical
+                                            ? "IDENTYCZNY"
+                                            : (
+                                                result.ratio !== null
+                                                    ? ("wsp: " + result.ratio)
+                                                    : "-"
+                                            )
+                                    ) + "</div>" +
                                 "</li>"
                             );
                         }
