@@ -1,7 +1,7 @@
 html {
     text-align: center;
     margin: auto;
-    width: 50%;
+    width: 75%;
 }
 
 #search-form .item {
@@ -23,12 +23,6 @@ html {
 #loadList {
     text-align: left;
 }
-
-
-#loadList {
-    text-align: left;
-}
-
 #loadList li {
     line-height: 24px;
     margin: 5px;
@@ -63,6 +57,10 @@ html {
 
 #results li {
     border: 1px solid #FFA500;
-    margin: 5px 0px;
+    margin: 5px;
     padding: 3px;
+    display: inline-block;
+    width: 23%;
+    vertical-align: top;
+    position: relative;
 }
