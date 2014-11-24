@@ -4,10 +4,12 @@ use Keradus\Graphics\Comparator;
 use Keradus\Graphics\Image;
 use Keradus\Graphics\ImageFileLoader;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-$app->match(
+$app
+    ->match(
         '/',
         function (Request $request) use ($app) {
             ImageFileLoader::registerBuiltInParsers();
@@ -66,7 +68,7 @@ $app->match(
 
                     $fileId = uniqid();
                     $img = new Image(new ImageFileLoader($data['file']->getRealPath()));
-                    $img->saveToGD2($app['imgGrep.cache'] . '/input-' . $fileId . '.gd2');
+                    $img->saveToGD2($app['imgGrep.getInputFilePathById']($fileId));
 
                     $data['file'] = $fileId;
                     $data['gallery'] = $app['imgGrep.galleries'][$data['gallery']];
@@ -78,7 +80,7 @@ $app->match(
                     ];
 
                     $files = [];
-                    foreach (Finder::create()->files()->in($app['imgGrep.galleriesDir.server']) as $file) {
+                    foreach (Finder::create()->files()->in($app['imgGrep.galleriesDir.server'] . '/' . $data['gallery']) as $file) {
                         if ("" !== $file->getExtension()) {
                             $files[] = $file->getRelativePathname();
                         }
@@ -94,17 +96,70 @@ $app->match(
     ->bind('index')
 ;
 
-$app->error(function (\Exception $e, $code) use ($app) {
-    if ($app['debug']) {
-        return;
-    }
+$app
+    ->post(
+        '/compute',
+        function (Request $request) use ($app) {
+            ImageFileLoader::registerBuiltInParsers();
 
-    $templates = [
-        'errors/' . $code . '.twig',
-        'errors/' . substr($code, 0, 2) . 'x.twig',
-        'errors/' . substr($code, 0, 1) . 'xx.twig',
-        'errors/default.twig',
-    ];
+            function compare(array $_params)
+            {
+                $comparator = Comparator::createInstance(
+                    $_params['algorithm'],
+                    [
+                        'imgA' => new Image(new ImageFileLoader($_params['fileA'])),
+                        'imgB' => new Image(new ImageFileLoader($_params['fileB'])),
+                    ]
+                );
 
-    return new Response($app['twig']->resolveTemplate($templates)->render(['code' => $code]), $code);
-});
+                $comparator->allowResize = !!$_params['resize'];
+                $comparator->useGreyscale = !!$_params['grey'];
+                $comparator->process();
+
+                return [
+                    'wasCompared' => $comparator->wasCompared(),
+                    'isIdentical' => $comparator->isIdentical(),
+                    'ratio'       => $comparator->getSimilarityRatio(),
+                ];
+            };
+
+            $response = [];
+            try {
+                $requestData = $request->request;
+
+                $response['result'] = compare([
+                    'fileA'     => $app['imgGrep.getInputFilePathById']($requestData->get('fileA')),
+                    'fileB'     => $app['imgGrep.galleriesDir.server'] . '/' . $requestData->get('fileB'),
+                    'algorithm' => $requestData->get('algorithm'),
+                    'grey'      => $requestData->get('grey'),
+                    'resize'    => $requestData->get('resize'),
+                ]);
+            } catch (\Exception $e) {
+                $response["error"] = true;
+                $response["error_descr"] = $e->getMessage();
+            }
+
+            return new JsonResponse($response);
+        }
+    )
+    ->bind('compute')
+;
+
+$app
+    ->error(
+        function (\Exception $e, $code) use ($app) {
+            if ($app['debug']) {
+                return;
+            }
+
+            $templates = [
+                'errors/' . $code . '.twig',
+                'errors/' . substr($code, 0, 2) . 'x.twig',
+                'errors/' . substr($code, 0, 1) . 'xx.twig',
+                'errors/default.twig',
+            ];
+
+            return new Response($app['twig']->resolveTemplate($templates)->render(['code' => $code]), $code);
+        }
+    )
+;

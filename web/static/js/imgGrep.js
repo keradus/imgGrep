@@ -9,30 +9,11 @@
     imgGrepConfig = {};
 
     function file2url(_file) {
-        var galleries, key, url;
-
-        galleries = imgGrepConfig.galleries;
-
-        if (!galleries) {
-            return _file;
-        }
-
-        url = _file;
-
-        for (key in galleries) {
-            if (galleries.hasOwnProperty(key)) {
-                url = url.replace(key, galleries[key]);
-            }
-        }
-
-        return url;
+        return imgGrepConfig.galleriesDir + "/" + imgGrepConfig.galleries[imgGrepConfig.params.gallery] + "/" + _file;
     }
 
     function readConfig() {
-        var config;
-
-        config = $("#imgGrep-config").data("config");
-        $.extend(true, imgGrepConfig, config);
+        $.extend(true, imgGrepConfig, $("#search-result").data("config"));
     }
 
     $(document).ready (function() {
@@ -73,19 +54,16 @@
                 };
 
                 items.push({
-                    url: "api.php",
+                    url: "./compute",
                     cache: false,
                     type: "POST",
                     timeout: 25000,
                     data: {
-                        cmd: "compare",
-                        params: {
-                            gray: params.gray,
-                            resize: params.resize,
-                            fileA: params.file,
-                            fileB: file,
-                            algorithm: params.algorithm
-                        }
+                        grey: params.grey ? 1 : 0,
+                        resize: params.resize ? 1 : 0,
+                        fileA: params.file,
+                        fileB: params.gallery + "/" + file,
+                        algorithm: params.algorithm
                     },
                     dataType: "json",
                     beforeSend: function() {
