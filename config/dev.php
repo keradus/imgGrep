@@ -12,7 +12,8 @@ $app['debug'] = true;
 $app->register(new MonologServiceProvider(), [
     'monolog.logfile' => __DIR__ . '/../var/logs/silex_dev.log',
 ]);
-
+/*
 $app->register(new WebProfilerServiceProvider(), [
     'profiler.cache_dir' => __DIR__ . '/../var/cache/profiler',
 ]);
+*/

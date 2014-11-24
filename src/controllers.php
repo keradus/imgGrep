@@ -1,22 +1,27 @@
 <?php
 
+use Keradus\Graphics\Comparator;
+use Keradus\Graphics\Image;
+use Keradus\Graphics\ImageFileLoader;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use \Keradus\Graphics\ImageFileLoader;
-use \Keradus\Graphics\Comparator;
 
-$app->get(
+$app->match(
         '/',
         function (Request $request) use ($app) {
+            ImageFileLoader::registerBuiltInParsers();
             $algorithms = Comparator::getAllowedInstanceNames();
 
-            //ImageFileLoader::registerBuiltInParsers();
-            //var_dump(ImageFileLoader::getAvailableTypes());
-
-            $defaults = [];
-
-            $form = $app['form.factory']->createBuilder('form', $defaults)
-//                ->add('file', 'file')
+            $form = $app['form.factory']->createBuilder('form', [])
+                ->add('file', 'file', [
+                    'constraints' => [
+                        new \Symfony\Component\Validator\Constraints\Image([
+                            'mimeTypes'        => ImageFileLoader::getAvailableTypes(),
+                            'mimeTypesMessage' => 'Nieprawidłowy plik obrazu',
+                        ]),
+                    ]
+                ])
                 ->add('resize', 'checkbox', [
                     'label'    => 'Zezwól na dopasowanie rozmiarów',
                     'required' => false,
@@ -48,6 +53,40 @@ $app->get(
                 ->getForm();
 
             $form->handleRequest($request);
+
+            if ($form->isSubmitted()) {
+                $limitField = $form->get('limit');
+                $limitFieldValue = $limitField->getData();
+                if (null !== $limitFieldValue && (!is_int($limitFieldValue) || $limitFieldValue <= 0)) {
+                    $limitField->addError(new Symfony\Component\Form\FormError('Wartość musi być dodatnią liczbą całkowitą'));
+                }
+
+                if ($form->isValid()) {
+                    $data = $form->getData();
+
+                    $fileId = uniqid();
+                    $img = new Image(new ImageFileLoader($data['file']->getRealPath()));
+                    $img->saveToGD2($app['imgGrep.cache'] . '/input-' . $fileId . '.gd2');
+
+                    $data['file'] = $fileId;
+                    $data['gallery'] = $app['imgGrep.galleries'][$data['gallery']];
+
+                    $config = [
+                        'galleriesDir' => $app['imgGrep.galleriesDir.web'],
+                        'galleries'    => $app['imgGrep.galleries'],
+                        'params'       => $data,
+                    ];
+
+                    $files = [];
+                    foreach (Finder::create()->files()->in($app['imgGrep.galleriesDir.server']) as $file) {
+                        if ("" !== $file->getExtension()) {
+                            $files[] = $file->getRelativePathname();
+                        }
+                    }
+
+                    return $app['twig']->render('index_result.twig', ['config' => json_encode($config), 'files' => $files]);
+                }
+            }
 
             return $app['twig']->render('index.twig', ['form' => $form->createView()]);
         }

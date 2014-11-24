@@ -1,0 +1,15 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1 id="title" class="contact">imgGrep</h2>
+
+    <div id='search-result' data-config='{{ config }}'>
+        <div id='progressbar'></div>
+        <ul id='loadList'>
+        {% for file in files %}
+            <li>{{ file }}</li>
+        {% endfor %}
+        </ul>
+        <ul id='results'></ul>
+    </div>
+{% endblock %}

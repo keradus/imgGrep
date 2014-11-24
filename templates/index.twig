@@ -2,8 +2,94 @@
 
 {% block content %}
     <h1 id="title" class="contact">imgGrep</h2>
-    <form id="search-form" action="#" method="post" enctype="application/x-www-form-urlencoded">
-        {{ form_widget(form) }}
-        <input type="submit" name="submit" />
-    </form>
+
+    {{ form_start(form, {'attr': {'id': 'search-form'}}) }}
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.file) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.file) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.file) }}
+            </div>
+        </div>
+
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.resize) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.resize) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.resize) }}
+            </div>
+        </div>
+
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.grey) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.grey) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.grey) }}
+            </div>
+        </div>
+
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.identical) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.identical) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.identical) }}
+            </div>
+        </div>
+
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.limit) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.limit) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.limit) }}
+            </div>
+        </div>
+
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.algorithm) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.algorithm) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.algorithm) }}
+            </div>
+        </div>
+
+        <div class='item'>
+            <div class='label'>
+                {{ form_label(form.gallery) }}
+            </div>
+            <div class='widget'>
+                {{ form_widget(form.gallery) }}
+            </div>
+            <div class='errors'>
+                {{ form_errors(form.gallery) }}
+            </div>
+        </div>
+
+        <div>
+            {{ form_widget(form.save) }}
+        </div>
+    {{ form_end(form) }}
 {% endblock %}
