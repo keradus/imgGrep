@@ -14,17 +14,17 @@ $console = new Application('imgGrep', 'n/a');
 $console->getDefinition()->addOption(new InputOption('--env', '-e', InputOption::VALUE_REQUIRED, 'The Environment name.', 'dev'));
 $console->setDispatcher($app['dispatcher']);
 $console
-    ->register('compare')
+    ->register('search')
     ->setDefinition([
         new InputArgument('base', InputArgument::REQUIRED, 'Image base', null),
-        new InputArgument('dest', InputArgument::REQUIRED, 'Image to compare or directory with images', null),
+        new InputArgument('dest', InputArgument::REQUIRED, 'Directory with images', null),
         new InputOption('algorithm', null, InputOption::VALUE_REQUIRED, 'Algorithm'),
         new InputOption('grey', null, InputOption::VALUE_NONE, 'Compare in grey channel'),
         new InputOption('resize', null, InputOption::VALUE_NONE, 'Allow to resize'),
         new InputOption('iterations', null, InputOption::VALUE_REQUIRED, 'Number of iteration', 1),
 
     ])
-    ->setDescription('Compare images')
+    ->setDescription('Search image')
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
         $arguments = $input->getArguments();
         $options   = $input->getOptions();
@@ -49,22 +49,16 @@ $console
             return 1;
         }
 
-        if (!is_file($arguments['dest']) && !is_dir($arguments['dest'])) {
+        if (!is_dir($arguments['dest'])) {
             $output->writeln('<error>Invalid dest file/dir.</error>');
 
             return 1;
         }
 
-        $compareSingleFile = is_file($arguments['dest']);
-
         $filesToCompare = [];
-        if ($compareSingleFile) {
-            $filesToCompare[] = $arguments['dest'];
-        } else {
-            foreach (Finder::create()->files()->in($arguments['dest']) as $file) {
-                if ("" !== $file->getExtension()) {
-                    $filesToCompare[] = $file->getPathname();
-                }
+        foreach (Finder::create()->files()->in($arguments['dest']) as $file) {
+            if ("" !== $file->getExtension()) {
+                $filesToCompare[] = $file->getPathname();
             }
         }
 
@@ -80,8 +74,10 @@ $console
                 'grey'      => $options['grey'],
                 'resize'    => $options['resize'],
             ]);
+
             $result['file'] = $file;
             $compareResults[] = $result;
+
             $output->write('.');
         }
         $output->write("\n");
