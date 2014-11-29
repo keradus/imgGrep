@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 $console = new Application('imgGrep', 'n/a');
 $console->getDefinition()->addOption(new InputOption('--env', '-e', InputOption::VALUE_REQUIRED, 'The Environment name.', 'dev'));
@@ -22,7 +23,6 @@ $console
         new InputOption('grey', null, InputOption::VALUE_NONE, 'Compare in grey channel'),
         new InputOption('resize', null, InputOption::VALUE_NONE, 'Allow to resize'),
         new InputOption('iterations', null, InputOption::VALUE_REQUIRED, 'Number of iteration', 1),
-
     ])
     ->setDescription('Search image')
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
@@ -37,7 +37,7 @@ $console
 
         $allowedAlgorithms = Comparator::getAllowedInstanceNames();
 
-        if (!in_array($options['algorithm'], $allowedAlgorithms)) {
+        if (!in_array($options['algorithm'], $allowedAlgorithms, true)) {
             $output->writeln('<error>Unknown algorithm. Use one of ' . join(', ', $allowedAlgorithms) . '.</error>');
 
             return 1;
@@ -55,6 +55,11 @@ $console
             return 1;
         }
 
+        $options['iterations'] = (int) $options['iterations'];
+        if ($options['iterations'] <= 0) {
+            $options['iterations'] = 1;
+        }
+
         $filesToCompare = [];
         foreach (Finder::create()->files()->in($arguments['dest']) as $file) {
             if ("" !== $file->getExtension()) {
@@ -65,23 +70,29 @@ $console
         ImageFileLoader::registerBuiltInParsers();
 
         $compareResults = [];
+        $stopwatch = new Stopwatch();
+        $stopwatch->start('search');
 
-        foreach ($filesToCompare as $file) {
-            $result = $app['imgGrep.compare']([
-                'fileA'     => $arguments['base'],
-                'fileB'     => $file,
-                'algorithm' => $options['algorithm'],
-                'grey'      => $options['grey'],
-                'resize'    => $options['resize'],
-            ]);
+        for ($i = $options['iterations']; $i > 0; --$i) {
+            $compareResults = [];
 
-            $result['file'] = $file;
-            $compareResults[] = $result;
+            foreach ($filesToCompare as $file) {
+                $result = $app['imgGrep.compare']([
+                    'fileA'     => $arguments['base'],
+                    'fileB'     => $file,
+                    'algorithm' => $options['algorithm'],
+                    'grey'      => $options['grey'],
+                    'resize'    => $options['resize'],
+                ]);
 
-            $output->write('.');
+                $result['file'] = $file;
+                $compareResults[] = $result;
+            }
+
+            $stopwatch->lap('search');
         }
-        $output->write("\n");
 
+        $watchEvent = $stopwatch->stop('search');
         $compareResults = array_filter($compareResults, function ($item) { return $item['wasCompared']; });
 
         usort($compareResults, function ($a, $b) {
@@ -96,7 +107,15 @@ $console
             return $a['ratio'] - $b['ratio'];
         });
 
-        $output->writeln(json_encode($compareResults, JSON_PRETTY_PRINT));
+        $result = [
+            "compare"       => $compareResults,
+            "duration"      => $watchEvent->getDuration() / $options['iterations'] / 1000, // in s
+            "iterations"    => $options['iterations'],
+            "memory"        => $watchEvent->getMemory() / 1024 / 1024, // in MB
+            "totalDuration" => $watchEvent->getDuration() / 1000, // in s
+        ];
+
+        $output->write(json_encode($result, JSON_PRETTY_PRINT));
     })
 ;
 
