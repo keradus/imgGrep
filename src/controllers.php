@@ -17,6 +17,7 @@ $app
 
             $form = $app['form.factory']->createBuilder('form', [])
                 ->add('file', 'file', [
+                    'label'       => 'Plik',
                     'constraints' => [
                         new \Symfony\Component\Validator\Constraints\Image([
                             'mimeTypes'        => ImageFileLoader::getAvailableTypes(),
@@ -100,34 +101,11 @@ $app
     ->post(
         '/compute',
         function (Request $request) use ($app) {
-            ImageFileLoader::registerBuiltInParsers();
-
-            function compare(array $_params)
-            {
-                $comparator = Comparator::createInstance(
-                    $_params['algorithm'],
-                    [
-                        'imgA' => new Image(new ImageFileLoader($_params['fileA'])),
-                        'imgB' => new Image(new ImageFileLoader($_params['fileB'])),
-                    ]
-                );
-
-                $comparator->allowResize = !!$_params['resize'];
-                $comparator->useGreyscale = !!$_params['grey'];
-                $comparator->process();
-
-                return [
-                    'wasCompared' => $comparator->wasCompared(),
-                    'isIdentical' => $comparator->isIdentical(),
-                    'ratio'       => $comparator->getSimilarityRatio(),
-                ];
-            };
-
             $response = [];
             try {
                 $requestData = $request->request;
 
-                $response['result'] = compare([
+                $response['result'] = $app['imgGrep.compare']([
                     'fileA'     => $app['imgGrep.getInputFilePathById']($requestData->get('fileA')),
                     'fileB'     => $app['imgGrep.galleriesDir.server'] . '/' . $requestData->get('fileB'),
                     'algorithm' => $requestData->get('algorithm'),
